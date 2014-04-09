@@ -6,11 +6,11 @@ from fabric import colors
 from fabric.api import run, sudo, hide, settings, put, env, prefix, cd, abort
 from fabric.contrib.files import upload_template
 from fabric.contrib.console import confirm
-from fabric import version as fabric_version
+from fabric import version as fversion
 
 
 PROPER_SUDO_PREFIX = "sudo -i -S -p '%s' " \
-                     if fabric_version.VERSION < (1, 4, 2) else \
+                     if fversion.VERSION < (1, 4, 2) else \
                      "sudo -i -S -p '%(sudo_prompt)s' "
 
 
@@ -31,9 +31,9 @@ def show(msg, *args):
     print colors.cyan('==>', bold=True), msg
 
 
-def cget(name):
+def cget(name, default=None):
     u"Get configuration variable from the global context."
-    return env["ctx"].get(name)
+    return env["ctx"].get(name, default)
 
 
 def cset(name, value, force=False):
@@ -173,11 +173,9 @@ def run_django_cmd(command, args=""):
     show("Running django command: %s with args %s", command, args)
     with prefix('source %s' % pjoin(ve_dir, "bin", "activate")):
         with cd(cget("manage_py_dir")):
-            with settings(hide("stdout", "running"),
-                    sudo_prefix=PROPER_SUDO_PREFIX):
-                sudo("DJANGO_SETTINGS_MODULE=%s python manage.py %s %s" % (
-                    cget("settings_full_name"), command, args),
-                    user=cget("user"))
+            with settings(hide("stdout", "running")):
+                run("DJANGO_SETTINGS_MODULE=%s python manage.py %s %s" % (
+                    cget("settings_full_name"), command, args))
 
 
 def get_boolean(value):

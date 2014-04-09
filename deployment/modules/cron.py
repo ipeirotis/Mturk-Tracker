@@ -1,10 +1,10 @@
 from os.path import join as pjoin, isdir
-from fabric.api import env, sudo, settings, hide
+from fabric.api import env, settings, hide
 from fabric.colors import yellow, red
-from modules import SERVICE_MANAGER
+from modules.system import service
 from modules.utils import (show, cget, create_target_directories,
-    local_files_dir, upload_templated_folder_with_perms,
-    upload_template_with_perms, PROPER_SUDO_PREFIX as SUDO_PREFIX)
+        local_files_dir, upload_templated_folder_with_perms,
+        upload_template_with_perms)
 
 
 def configure():
@@ -42,17 +42,19 @@ def configure():
                 directories_mode="700")
         else:
             upload_template_with_perms(
-                source, destination, context, mode="644", user='root', group='root')
+                source, destination, context, mode="644", user='root',
+                group='root')
 
     # format and upload command execution script used by cron
     scripts = ['manage_py_exec', 'manage_py_exec_silent']
     for script_name in scripts:
-        source = pjoin(cget("local_root"), 'deployment', 'scripts', script_name)
+        source = pjoin(cget("local_root"), 'deployment', 'scripts',
+                script_name)
         destination = pjoin(cget("script_dir"), script_name)
         upload_template_with_perms(source, destination, context, mode="755")
 
     show(yellow("Reloading cron"))
-    with settings(hide("stderr"), sudo_prefix=SUDO_PREFIX, warn_only=True):
-        res = sudo("{}cron reload".format(SERVICE_MANAGER))
+    with settings(hide("stderr"), warn_only=True):
+        res = service("cron", "reload")
         if res.return_code == 2:
             show(red("Error reloading cron!"))
