@@ -14,7 +14,7 @@ fi
 if ([ ! -f "$DL_TO/$FILE" ] || $UPDATE );
 then
     echo "Downloading solr"
-    wget "http://www.apache.org/dist/lucene/solr/$SOLR_VERSION/apache-solr-$SOLR_VERSION.tgz" -O "$DL_TO/$FILE"
+    wget "https://archive.apache.org/dist/lucene/solr/$SOLR_VERSION/apache-solr-$SOLR_VERSION.tgz" -O "$DL_TO/$FILE"
     echo "Downloading PostgreSQL JDBC driver"
     wget "http://jdbc.postgresql.org/download/postgresql-9.1-902.jdbc4.jar" -O "$DL_TO/postgresql.jdbc4.jar"
     echo "Unpacking solr"

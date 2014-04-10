@@ -64,8 +64,9 @@ def top_requesters(request):
             row = []
             url = reverse('requester_details', kwargs={'requester_id': cc[0]})
             row.append('<a href="%s">%s</a>' % (url, cc[1]))
-            row.append('<a href="https://www.mturk.com/mturk/searchbar?requesterId=%s" target="_mturk">%s</a> (<a href="http://feed.crowdsauced.com/r/req/%s">RSS</a>)'
-                       % (cc[0], cc[0], cc[0]))
+            row.append('<a href="{0}/mturk/searchbar?requesterId={1}" target="_mturk">{1}</a> (<a href="http://feed.crowdsauced.com/r/req/{1}">RSS</a>)'.format(
+                settings.MTURK_PAGE, cc[0]
+            ))
             row.extend(cc[2:6])
             url = reverse('admin-toggle-requester-status', args=(cc[0], ))
             row.append('<a href="%s">%s</a>' % (url, cc[6] and 'public' or 'private'))

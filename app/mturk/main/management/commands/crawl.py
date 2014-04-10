@@ -159,7 +159,7 @@ class Command(BaseCommand):
             # check if all jobs ended successfully
             for job in jobs:
                 if not job.ready():
-                    log.error('Killing job: %s', job)
+                    log.info('Killing job: %s', job)
                     job.kill()
 
             if len(processed_groups) >= groups_available:

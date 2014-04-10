@@ -58,11 +58,13 @@ def _get_html(url, timeout=settings.CRAWLER_FETCH_TIMEOUT,
 
 
 def hitsearch_url(page=1):
-    return 'https://www.mturk.com/mturk/viewhits?searchWords=&selectedSearchType=hitgroups&sortType=LastUpdatedTime:1&pageNumber=' + str(page) + '&searchSpec=HITGroupSearch%23T%231%2310%23-1%23T%23!%23!LastUpdatedTime!1!%23!'
+    return '{}/mturk/viewhits?searchWords=&selectedSearchType=hitgroups&sortType=LastUpdatedTime:1&pageNumber={}&searchSpec=HITGroupSearch%23T%231%2310%23-1%23T%23!%23!LastUpdatedTime!1!%23!'.format(
+        settings.MTURK_PAGE, page
+    )
 
 
 def group_url(id):
-    return "https://www.mturk.com/mturk/preview?groupId=%s" % id
+    return "{}/mturk/preview?groupId={}".format(settings.MTURK_PAGE, id)
 
 
 def amazon_review_url(id):
@@ -71,7 +73,7 @@ def amazon_review_url(id):
 
 def hits_mainpage_total():
     """Get total available hits from mturk main page"""
-    url = 'https://www.mturk.com/mturk/welcome'
+    url = '{}/mturk/welcome'.format(settings.MTURK_PAGE)
     html = _get_html(url)
     return parser.hits_mainpage(html)
 
@@ -136,7 +138,7 @@ def hits_group_info(group_id):
 
 def hits_groups_total():
     """Return total number of hits groups or None"""
-    url = "https://www.mturk.com/mturk/findhits?match=false"
+    url = "{}/mturk/findhits?match=false".format(settings.MTURK_PAGE)
     html = _get_html(url)
     return parser.hits_group_total(html)
 
@@ -182,6 +184,7 @@ def process_group(hg, crawl_id, requesters, processed_groups, dbpool):
 
         hg['hit_group_content_id'] = hit_group_content_id
         hg['crawl_id'] = crawl_id
+        hg['now'] = datetime.datetime.now()
         db.insert_hit_group_status(hg)
         conn.commit()
     except Exception:

@@ -2,7 +2,11 @@ import urllib
 import urllib2
 import cookielib
 
-AMAZON_AUTH_URL = 'https://www.amazon.com/gp/aws/ssop/index.html?awscbctx=&awscbid=urn%3Aaws%3Asid%3A027Y0TCSPRG5XHFYJSR2&awscredential=&awsnoclientpipeline=true&awsstrict=false&awsturknosubway=true&wa=wsignin1.0&wctx=&wreply=https%3A%2F%2Fwww.mturk.com%3A443%2Fmturk%2Fendsignin&wtrealm=urn%3Aaws%3Asid%3A027Y0TCSPRG5XHFYJSR2&awssig=yZwe4P9pATXcyDaYEFCDKycNYIM%3D'
+from django.conf import settings
+
+AMAZON_AUTH_URL = 'https://www.amazon.com/gp/aws/ssop/index.html?awscbctx=&awscbid=urn%3Aaws%3Asid%3A027Y0TCSPRG5XHFYJSR2&awscredential=&awsnoclientpipeline=true&awsstrict=false&awsturknosubway=true&wa=wsignin1.0&wctx=&wreply={}%3A443%2Fmturk%2Fendsignin&wtrealm=urn%3Aaws%3Asid%3A027Y0TCSPRG5XHFYJSR2&awssig=yZwe4P9pATXcyDaYEFCDKycNYIM%3D'.format(
+    urllib.quote_plus(settings.MTURK_PAGE)
+)
 
 
 def install_opener():
