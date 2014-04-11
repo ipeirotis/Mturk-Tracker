@@ -469,3 +469,5 @@ CLASSIFIER_PATH = os.path.join("/home", "mtracker", "classifier.json")
 # Where the file will be generated. For deployment this must be somewhere the
 # collectstatic can find it else pipeline will raise as error.
 JSCONF_PATH = os.path.join(ROOT_PATH, 'static/js/jsconf.js')
+
+MTURK_PAGE = 'https://www.mturk.com'

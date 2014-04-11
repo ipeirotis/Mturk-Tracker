@@ -69,6 +69,10 @@ class HitGroupContent(models.Model):
         max_length=10000, null=True)
     occurrence_date = models.DateTimeField('First occurrence date', blank=True,
         null=True, db_index=True)
+
+    hits_available = models.IntegerField('Last HITs available number', default=0)
+    last_updated = models.DateTimeField(null=True, blank=True)
+
     '''
     Time in minutes
     '''

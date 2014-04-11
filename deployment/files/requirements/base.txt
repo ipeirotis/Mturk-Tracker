@@ -1,10 +1,11 @@
 # Django
-Django>=1.4
+Django>=1.4,<1.5
 django-extensions
+django-tastypie==0.9.14
 django-pipeline>=1.2
 South
 -e git+git://github.com/earle/django-bootstrap.git#egg=bootstrap
--e git+https://github.com/10clouds/dj-crud.git#egg=django-crud
+-e git+https://github.com/10clouds/dj-crud.git@0faf2ec36103deb261aebe3a11611b46d891a6e7#egg=django-crud
 
 # Services
 python-memcached
@@ -26,8 +27,7 @@ pysolr
 
 # Sphinx documentation as a part of the site.
 Sphinx
-# Django sphinxdoc autogeneration is forked and migrated to haystack 2.0.0.
--e hg+https://bitbucket.org/borysiam/django-sphinxdoc#egg=django-sphinxdoc
+django-sphinxdoc==1.3.0
 
 # convenience
 ipdb

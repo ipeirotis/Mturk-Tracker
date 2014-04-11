@@ -70,13 +70,15 @@ class DB(object):
                 INSERT INTO main_hitgroupcontent(
                     reward, description, title, requester_name, qualifications,
                     time_alloted, html, keywords, requester_id, group_id,
-                    group_id_hashed, occurrence_date, first_crawl_id, is_public
+                    group_id_hashed, occurrence_date, first_crawl_id, is_public,
+                    last_updated, hits_available
                 )
                 VALUES (
                     %(reward)s, %(description)s, %(title)s, %(requester_name)s,
                     %(qualifications)s, %(time_alloted)s, %(html)s, %(keywords)s,
                     %(requester_id)s, %(group_id)s, %(group_id_hashed)s,
-                    %(occurrence_date)s, %(first_crawl_id)s, %(is_public)s
+                    %(occurrence_date)s, %(first_crawl_id)s, %(is_public)s,
+                    %(occurrence_date)s, 0
                 )''', data)
             self.curr.execute("SELECT currval('main_hitgroupcontent_id_seq')")
         except psycopg2.IntegrityError:
@@ -106,6 +108,13 @@ class DB(object):
                 %(page_number)s, %(group_id)s, %(hits_available)s,
                 %(hit_expiration_date)s
             )''', data)
+
+        self.curr.execute('''
+            UPDATE main_hitgroupcontent
+            SET hits_available = %(hits_available)s,
+                last_updated = %(now)s
+            WHERE id = %(hit_group_content_id)s
+        ''', data)
 
         # add related hitgroupcontent id to index queue
         self.curr.execute('''
