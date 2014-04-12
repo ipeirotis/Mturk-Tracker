@@ -149,10 +149,6 @@ def install_postgres():
             'postgresql91-server',
             'postgresql91-devel',
         ]))
-        # Initialize and start postgres.
-        prefix = '/etc/init.d/postgresql-9.1'
-        sudo('{} initdb'.format(prefix))
-        sudo('{} start'.format(prefix))
 
 
 @task
