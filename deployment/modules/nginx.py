@@ -30,19 +30,20 @@ def configure():
     enabled = cget("nginx_sites_enabled")
     with settings(hide("running", "stderr", "stdout"), sudo_prefix=SUDO_PREFIX,
             warn_only=True):
+        available_dir = '{}/sites-enabled'
+        enabled_dir = '{}/sites-available'
         show("Enabling sites: {}.".format(enabled))
-        for s in enabled:
-            available = '/etc/nginx/sites-available'
-            enabled = '/etc/nginx/sites-enabled'
+        sudo('mkdir -p {}'.format(enabled_dir))
+        for site in enabled:
             ret = sudo("ln -s {available}/{site} {enabled}/{site}".format(
-                available=available, enabled=enabled, site=s))
+                available=available_dir, enabled=enabled_dir, site=site))
             if ret.failed:
-                show(red("Error enabling site: {}: {}.".format(s, ret)))
+                show(red("Error enabling site: {}: {}.".format(site, ret)))
 
 
 def reload():
     """Starts or restarts nginx."""
-    with settings(hide("stderr"), sudo_prefix=SUDO_PREFIX, warn_only=True):
+    with settings(hide("stderr"), warn_only=True):
         service("nginx", "reload")
         res = service("nginx", "restart")
         if res.return_code == 2:
