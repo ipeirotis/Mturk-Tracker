@@ -20,8 +20,8 @@ DEFAULT_CONF_FILE = pjoin(PARENT_DIR, 'target_defs', 'defaults.json')
 def prepare_global_env():
     """Ensure global settings - one time only."""
     system.install_requirements()
-    # setup_ssh()
-    # solr.provision(update=cget("setup_environment"))
+    setup_ssh()
+    solr.provision(update=cget("setup_environment"))
 
 
 def setup_ssh():
