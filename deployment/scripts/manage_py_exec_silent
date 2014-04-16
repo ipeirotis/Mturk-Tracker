@@ -10,7 +10,7 @@
 # any automated processes, like cron.
 #
 
-CMD=$(1:-help)
+CMD=${1:-help}
 
 LOGDIR="%(log_dir)s/cron"
 
