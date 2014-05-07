@@ -10,7 +10,7 @@ MODULES = {'centos': centos, 'ubuntu': ubuntu}
 
 def get_module():
     distro = cget('distro', 'ubuntu')
-    if distro not in MODULES.keys():
+    if distro not in MODULES:
         abort(red('Unknown distro: %s' % distro))
     return MODULES[distro]
 
