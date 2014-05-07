@@ -24,17 +24,16 @@ def install_system_requirements():
     This is done before fetch, thus the file is taken from *local* storage.
 
     """
-    reqs = cget('system_requirements')
-    if reqs:
-        for req in reqs:
-            requirements = pjoin(local_files_dir("requirements"), req)
-            show(yellow("Processing system requirements file: %s" %
-                 requirements))
-            with open(requirements) as f:
-                r = ' '.join([f.strip() for f in f.readlines()])
-                name = 'requirements: {0}'.format(r)
-                with settings(sudo_prefix=SUDO_PREFIX):
-                    install_without_prompt(r, name, silent=False)
+    reqs = cget('system_requirements', [])
+    for req in reqs:
+        requirements = pjoin(local_files_dir("requirements"), req)
+        show(yellow("Processing system requirements file: %s" %
+                    requirements))
+        with open(requirements) as f:
+            r = ' '.join([f.strip() for f in f.readlines()])
+            name = 'requirements: {0}'.format(r)
+            with settings(sudo_prefix=SUDO_PREFIX):
+                install_without_prompt(r, name, silent=False)
 
 
 def install_nginx():
