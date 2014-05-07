@@ -1,5 +1,5 @@
 mock
-https://github.com/kmmbvnr/django-jenkins/zipball/master#egg=django-jenkins.egg
+django-jenkins>=0.14,<0.15
 pylint==0.25.1
 pyflakes
 pep8

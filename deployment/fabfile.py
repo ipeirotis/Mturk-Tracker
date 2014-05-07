@@ -2,55 +2,25 @@ import os
 from os.path import join as pjoin
 import json
 from fabric.colors import red, yellow, green, blue, magenta
-from fabric.api import abort, task, env, hide, settings, sudo, cd
+from fabric.api import abort, task, env, settings, cd, run
 
-from modules import nginx, supervisor, postgresql, solr, cron, doc
+from modules import nginx, supervisor, postgresql, solr, cron, doc, system
 from modules.database import (ensure_database, ensure_user, ensure_language)
-from modules.virtualenv import (update_virtualenv, create_virtualenv,
-    setup_virtualenv)
+from modules.virtualenv import update_virtualenv, create_virtualenv
 from modules.utils import (show, put_file_with_perms,
     dir_exists, PROPER_SUDO_PREFIX as SUDO_PREFIX, cget, cset, print_context,
     run_django_cmd, upload_template_with_perms, local_files_dir, get_boolean,
-    install_without_prompt, create_target_directories, confirm_or_abort)
+    create_target_directories, confirm_or_abort)
 
 
 PARENT_DIR = os.path.abspath(os.path.dirname(__file__))
 DEFAULT_CONF_FILE = pjoin(PARENT_DIR, 'target_defs', 'defaults.json')
 
 
-def prep_apt_get():
-    show(yellow("Updating and fixing apt-get."))
-    with settings(sudo_prefix=SUDO_PREFIX, warn_only=False):
-        with settings(hide("stdout", "running")):
-            sudo("apt-get update")
-        sudo("apt-get -f -y install")
-
-
-def install_system_requirements():
-    """Installs packages included in system_requirements.txt.
-    This is done before fetch, thus the file is taken from *local* storage.
-
-    """
-    reqs = cget('system_requirements')
-    if reqs:
-        for req in reqs:
-            requirements = pjoin(local_files_dir("requirements"), req)
-            show(yellow("Processing system requirements file: %s" %
-                    requirements))
-            with open(requirements) as f:
-                r = ' '.join([f.strip() for f in f.readlines()])
-                name = 'requirements: {0}'.format(r)
-                with settings(sudo_prefix=SUDO_PREFIX):
-                    install_without_prompt(r, name, silent=False)
-
-
 def prepare_global_env():
     """Ensure global settings - one time only."""
-    prep_apt_get()
-    install_system_requirements()
+    system.install_requirements()
     setup_ssh()
-    setup_virtualenv()
-    nginx.provision()
     solr.provision(update=cget("setup_environment"))
 
 
@@ -108,24 +78,22 @@ def fetch_project_code():
     project_dir = cget("project_dir")
     repo_dir = pjoin(project_dir, "code")
     url = cget("source_url")
-    user = cget("user")
     if commit:
         rev = commit
     else:
         rev = "origin/%s" % (branch or "master")
-
     with settings(sudo_prefix=SUDO_PREFIX):
         if not dir_exists(pjoin(repo_dir, ".git")):
             show(yellow("Cloning repository following: %s"), rev)
-            sudo("git clone %s %s" % (url, repo_dir), user=user)
+            run("git clone %s %s" % (url, repo_dir))
             with cd(repo_dir):
-                sudo("git reset --hard %s" % rev, user=user)
+                run("git reset --hard %s" % rev)
         else:
             show(yellow("Updating repository following: %s"), rev)
             with cd(repo_dir):
-                sudo("git fetch origin", user=user)  # Prefetch changes.
-                sudo("git clean -f", user=user)  # Clean local files.
-                sudo("git reset --hard %s" % rev, user=user)
+                run("git fetch origin")  # Prefetch changes.
+                run("git clean -f")  # Clean local files.
+                run("git reset --hard %s" % rev)
 
 
 def clear_pyc():
@@ -133,7 +101,7 @@ def clear_pyc():
     with settings(sudo_prefix=SUDO_PREFIX):
         show(yellow("Clearing *.pyc files."))
         with cd(cget("project_dir")):
-            sudo('find . -type f -name "*.pyc" -delete;')
+            run('find . -type f -name "*.pyc" -delete')
 
 
 def upload_settings_files():
