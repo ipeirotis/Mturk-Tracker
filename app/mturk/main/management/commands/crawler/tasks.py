@@ -96,13 +96,16 @@ def hits_groups_info(page_nr,
     def __fix_missing_hash(hg):
         hg['group_id_hashed'] = not bool(hg.get('group_id', None))
         if hg['group_id_hashed']:
-            composition = ';'.join(map(str, (
-                hg['title'], hg['requester_id'], hg['time_alloted'],
-                hg['reward'], hg['description'], hg['keywords'],
-                hg['qualifications']))) + ';'
-            hg['group_id'] = hashlib.md5(composition).hexdigest()
-            log.debug('group_id not found, creating hash: %s  %s',
-                    hg['group_id'], hg['title'])
+            hg['group_id'] = hg.get('hit_id', None)
+            log.debug('group id not found, trying hit_id %s', hg['group_id'])
+            if not hg['group_id']:
+                composition = ';'.join(map(str, (
+                    hg['title'], hg['requester_id'], hg['time_alloted'],
+                    hg['reward'], hg['description'], hg['keywords'],
+                    hg['qualifications']))) + ';'
+                hg['group_id'] = hashlib.md5(composition).hexdigest()
+                log.debug('hit_id not found, creating hash: %s  %s',
+                          hg['group_id'], hg['title'])
     url = hitsearch_url(page_nr)
     html = _get_html(url)
     rows = []

@@ -228,7 +228,7 @@ def hits_group_listinfo(html):
         # group id is not always available but hit id in the 'why' link should
         # point to correct group id
         res['hit_id'] = res.get('hit_id', None)
-        res['group_id'] = res.get('group_id', res['hit_id'])
+        res['group_id'] = res.get('group_id', None)
         # convert time allotated to seconds
         res['time_alloted'] = human_timedelta_seconds(res['time_alloted'])
 
