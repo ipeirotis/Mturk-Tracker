@@ -33,11 +33,16 @@ _RX_HITS_LIST = \
         <a\s+class="capsulelink"[^>]*>\s*(?P<title>.*?)\s*</a>
         .*?
 
-        # this one is otional, because it's now always available
+        # the following are optional, because it's not always available
+        (:?
+            hitId=(?P<hit_id>.*?)(&|")
+            .*?
+        )?
         (:?
             groupId=(?P<group_id>.*?)(&|")
             .*?
         )?
+
 
         Requester
         .*?
@@ -128,7 +133,7 @@ _RX_HITS_LIST_QUALIFICATIONS = \
     ''', re.M | re.X | re.S)
 
 _RX_HITS_DETAILS = \
-        re.compile(r'''
+    re.compile(r'''
         \s+Duration
         .*?
         <td[^>]*>
@@ -220,7 +225,9 @@ def hits_group_listinfo(html):
         qualifications = _RX_HITS_LIST_QUALIFICATIONS.findall(
             res['qualifications'])
         res['qualifications'] = [rm_dup_whitechas(q) for q in qualifications]
-        # group id is not always available
+        # group id is not always available but hit id in the 'why' link should
+        # point to correct group id
+        res['hit_id'] = res.get('hit_id', None)
         res['group_id'] = res.get('group_id', None)
         # convert time allotated to seconds
         res['time_alloted'] = human_timedelta_seconds(res['time_alloted'])
