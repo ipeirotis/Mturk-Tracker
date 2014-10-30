@@ -35,7 +35,7 @@ def callback_allhit(pages, **kwargs):
             except:
                 break
         return list
-
+    
 #    def is_soup(object):
 #        soup = BeautifulSoup()
 #        if type(object) == type(soup) or type(object) == type(ResultSet('')) or type(object) == type(Tag(soup, "div", [])):
@@ -98,14 +98,17 @@ def callback_allhit(pages, **kwargs):
                             title = unicode(remove_whitespaces(title))
                         except:
                             title = ''
-
+                    
+                    # Remove <span> in title
+                    title = remove_whitespaces(strip_html(title))
+                    
                     fields = group_html.findAll('td', {'align':'left','valign':'top','class':'capsule_field_text'})
 
                     if len(fields) == 7:
 
                         # Requester's name and ID
                         requester_html = remove_newline_fields(fields[0].contents)[0]
-                        requester_name = unicode(requester_html.contents[0])
+                        requester_name = remove_whitespaces(strip_html(unicode(requester_html.contents[0]))) # Remove <span> in requester name
                         requester_id = requester_html['href']
                         start = requester_id.index('requesterId=')+12
                         stop = requester_id.index('&state')
