@@ -1,3 +1,5 @@
+This is depracated software. For the most recent version of the MTurk Tracker see https://github.com/ipeirotis/mturk-tracker-gae (note: that version also stopped working on February 29th, 2016)
+
 Mturk-Tracker
 =============
 
